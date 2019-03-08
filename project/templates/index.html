@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block css %}
+<style type="text/css">
+    table.hovertable 
+    {
+        font-family: verdana,arial,sans-serif;
+        font-size:11px;
+        color:#333333;
+        border-width: 1px;
+        border-color: #999999;
+        border-collapse: collapse;
+    }
+    table.hovertable th 
+    {
+        background-color:#c3dde0;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #a9c6c9;
+    }
+    table.hovertable tr 
+    {
+        background-color:#d4e3e5;
+    }
+    table.hovertable td 
+    {
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #a9c6c9;
+    }
+</style>
+{% endblock %}
+
+{% block showResults %}
+<div role="tabpanel" class="tab-pane" id="results">
+    <div class="check-div form-inline" align="center">
+        <button class="btn btn-yellow btn-sm" type="button" id="show" @click="showResults()">显示</button>
+        <button class="btn btn-yellow btn-sm" type="button" id="download">下载</button>
+        <p id="warning" style="font-size: 14px;color: red">{{ warning }}</p>
+    </div>
+
+
+    {% verbatim %}
+    <table class="hovertable" align="center">
+        <tr v-html="message[0]"></tr>
+        <script type="text/javascript">
+            no = 1;
+        </script>
+        <tr onmouseover="this.style.backgroundColor='#ffff66';" onmouseout="this.style.backgroundColor='#d4e3e5';"
+            v-for="student in message[2]">
+            <script type="text/javascript">
+                var str = "<td>" + no + "</td>";
+                document.write(str);
+                no = no + 1;
+            </script>
+            <td>{{ student.student_ID }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.department }}</td>
+            <td>{{ student.major }}</td>
+            <td>{{ student.grade }}</td>
+            <td>{{ student.graduate_time }}</td>
+            <td>{{ student.student_status }}</td>
+            <td>{{ student.failed_number }}</td>
+            <td>{{ student.center_credits }}</td>
+            <td>{{ student.courses_must_to_take }}</td>
+            <td>{{ student.one_direction }}</td>
+            <td>{{ student.another_direction }}</td>
+            <td>{{ student.general_courses }}</td>
+            <td v-for="ext in message[1]">{{ student.others[ext] }}</td>
+        </tr>
+    </table>
+    {% endverbatim %}
+
+</div>
+{% endblock %}
+
+{% block settings %}
+<div role="tabpanel" class="tab-pane active" id="settings">
+    <div class="check-div form-inline"></div>
+    <div class="data-div">
+        <div class="row tableHeader">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" align="center">编号</div>
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">名称</div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" align="center">操作</div>
+        </div>
+        <div class="tablebody">
+            <!--额外审核清单-->
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3" align="center">1</div>
+                <div id="topBD" class="col-lg-5 col-md-5 col-sm-5 col-xs-5" role="button" data-toggle="collapse" data-parent="#accordion" href="#extra" aria-expanded="false">
+                    <span id="topB" class="glyphicon  glyphicon-triangle-right"></span> 
+                    <span>额外审核的课程清单</span>
+                </div>
+            </div>
+            <div id="extra" class="collapse" aria-expanded="false">
+                <table class="table table-hover" v-cloak>
+                    <thead>
+                        <tr>
+                            <th class="text-center" >课程代码</th>
+                            <th class="text-center" >课程名称</th>                                  
+                            <th class="text-center" >操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% verbatim %}
+                        <tr v-for="ext in exts">
+                            <td class="text-center">{{ext.id}}</td>
+                            <td class="text-center">{{ext.name}}</td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger" @click="delExt(ext.id)">删除</button>
+                            </td>
+                        </tr>
+                        {% endverbatim %}
+                    </tbody>
+                </table>
+                
+                <div id="add-extra" align="center">
+                    <legend>添加课程</legend>
+                    <div class="form-group">
+                        <label>课程代码</label>
+                        <input type="text" class='form-control' v-model="ext.id" style="width:50%;">
+                        <label>课程名称</label>
+                        <input type="text" class='form-control' v-model="ext.name" style="width:50%;">
+                    </div>
+                    <button class="btn btn-primary btn-block" @click="addExt()" style="width:50%;">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
